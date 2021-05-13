@@ -3,6 +3,8 @@ from lxml import etree
 import json
 import random
 import time
+import captcha
+import traceback
 
 from formdata_init import formdata_init
 
@@ -23,17 +25,12 @@ requestheaders = {
 
 def get_captcha_code(session: requests.Session) -> str:
     ''' 获取验证码 '''
-    code_image_bytes = session.get(capurl).content
-    ##################################################
-    '''
-    你的验证码识别程序
-    '''
-    ##################################################
-    return '0000'
+    return captcha.get_captcha_code(session)
 
 
 def print_err(err: str) -> None:
     print(f'\033[1;31;40m{err}\033[0m')
+    err_buff.append(err)
 
 
 def login(session: requests.Session, username: str, password: str) -> bool:
@@ -125,7 +122,7 @@ def sleeptime() -> float:
     为避免每次打卡时间都在同一个时间，加入随机时间模拟
     可能并没有什么用
     '''
-    # return random.random()*120
+    # return random.random()*120+20
     return 0
 
 
@@ -133,20 +130,29 @@ def runclock(username: str, password: str):
     session = requests.Session()
     session.headers = requestheaders
     print('================================')
-    print(f'{time.asctime(time.localtime(time.time()))}启动打卡')
+    print(f'{time.asctime(time.localtime())}启动打卡')
 
     time.sleep(sleeptime())
 
-    print(f'{time.asctime(time.localtime(time.time()))}准备打卡')
+    print(f'{time.asctime(time.localtime())}准备打卡')
     if login(session, username, password) and clock(session):
-        print(f'{time.asctime(time.localtime(time.time()))}完成打卡')
+        print(f'{time.asctime(time.localtime())}完成打卡')
     else:
-        print_err(f'{time.asctime(time.localtime(time.time()))}打卡失败')
+        print_err(f'{time.asctime(time.localtime())}打卡失败')
     print('================================')
 
+def posttext2dingbot(text:str):
+    if post2dingbot:
+        dingbot.post_text(text)
+
+def postmarkdown2dingbot(title:str, text:str):
+    if post2dingbot:
+        dingbot.post_markdown(title, text)
 
 defusername = ""
 defpassword = ""
+err_buff:list = []
+post2dingbot = False
 
 def main():
     isreaddef = False
@@ -161,6 +167,8 @@ def main():
 
     if (isreaddef):
         runclock(defusername, defpassword)
+        postmarkdown2dingbot("【自动打卡】错误", f"""<font color=red>{time.strftime("%Y年%m月%d日 %H:%M", time.localtime())}<br>{'<br>'.join(err_buff)}</font>""")
+        err_buff.clear()
     else:
         for user in logins:
             try:
@@ -168,9 +176,23 @@ def main():
                 password = user['password']
             except:
                 print("读取某个登录用户失败")
+                postmarkdown2dingbot("【自动打卡】错误", f"""<font color=red>读取某个登录用户失败，配置为：<br>{user}</font>""")
                 continue
-            runclock(username, password)
+            try:
+                runclock(username, password)
+            except Exception as e:
+                traceback.print_exc()
+                print_err(e.args)
+                pass
+            if err_buff:
+                postmarkdown2dingbot("【自动打卡】错误", f"""<font color=red>{time.strftime("%Y年%m月%d日 %H:%M", time.localtime())}时出现错误<br>用户名为：{username}<br>错误为：<br>{'<br>'.join(err_buff)}<br>具体登录后台查看</font>""")
+                err_buff.clear()
+            else:
+                postmarkdown2dingbot(f"""【自动打卡】{username}打卡成功""", f"""{time.strftime("%Y年%m月%d日 %H:%M", time.localtime())}完成用户：{username}的打卡""")
+
 
 
 if __name__ == '__main__':
+    import dingbot
+    post2dingbot = True
     main()
