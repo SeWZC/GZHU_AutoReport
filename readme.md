@@ -6,7 +6,7 @@
 
 ### git下载
 ```shell
-git clone git@github.com:SeWZC/GZHU_AutoReport.git
+git clone https://github.com/SeWZC/GZHU_AutoReport.git
 ```
 
 ### python安装需求：
@@ -42,7 +42,7 @@ python3 auto_report.py
 输入`crontable -e`进入当前用户的定时文件，在最后一行插入一个任务即可<br>
 例如（8：25启动）：
 ```
-25 8 * * * root python3 代码目录/auto_clock.py >> 代码目录/log
+25 8 * * * python3 代码所在目录/auto_clock.py >> 代码所在目录/log
 ```
 如果有问题可以搜索crontab解决
 
