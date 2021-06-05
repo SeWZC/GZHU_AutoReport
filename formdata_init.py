@@ -2,6 +2,10 @@
 
 def formdata_init(data:dict, clock_form_url, tags, instanceName, clock_info: dict = None):
     formdata = {}
+
+    formdata['fieldJKMsfwlm'] = '1'
+    formdata['fieldJKMjt'] = ''
+
     formdata['_VAR_EXECUTE_INDEP_ORGANIZE_Name'] = data.get('_VAR_EXECUTE_INDEP_ORGANIZE_Name', '')
     formdata['_VAR_ACTION_INDEP_ORGANIZES_Codes'] = data.get('_VAR_ACTION_INDEP_ORGANIZES_Codes', '')
     formdata['_VAR_ACTION_REALNAME'] = data.get('_VAR_ACTION_REALNAME', '')
