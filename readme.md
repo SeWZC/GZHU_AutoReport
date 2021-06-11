@@ -20,7 +20,8 @@ python3 -m pip install -r requirements.txt
   "login": [
     {
       "username": "***",
-      "password": "***"
+      "password": "***",
+      "ymtime": "年-月-日"
     }
   ]
 }

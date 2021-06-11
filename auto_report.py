@@ -58,7 +58,7 @@ def login(session: requests.Session, username: str, password: str) -> bool:
     return True
 
 
-def clock(session: requests.Session):
+def clock(session: requests.Session, ymtime: int):
     ''' 进入打卡系统进行打卡 '''
 
     # 访问健康打卡加载页面，以获取Token
@@ -94,9 +94,11 @@ def clock(session: requests.Session):
     tags = render_json['entities'][0]['app']['tags']
     instanceName = render_json['entities'][0]['step']['instanceName']
     data = render_json['entities'][0]['data']
-    formdata = str(formdata_init(
-        data, clock_form_url, tags, instanceName))
-    boundFields = 'fieldSTQKzdjgmc,fieldSTQKjtcyglkssj,fieldCXXXsftjhb,fieldzgzjzdzjtdz,fieldJCDDqmsjtdd,fieldSHENGYC,fieldYQJLksjcsj,fieldSTQKjtcyzd,fieldJBXXjgsjtdz,fieldSTQKbrstzk,fieldSTQKfrtw,fieldSTQKjtcyqt,fieldCXXXjtfslc,fieldJBXXlxfs,fieldSTQKpcsj,fieldJKHDDzt,fieldYQJLsfjcqtbl,fieldYQJLzhycjcsj,fieldSTQKfl,fieldSTQKhxkn,fieldJBXXbz,fieldCXXXsfylk,fieldFLid,fieldjgs,fieldSTQKglfs,fieldCXXXsfjcgyshqzbl,fieldSTQKjtcyfx,fieldCXXXszsqsfyyshqzbl,fieldJCDDshi,fieldSTQKrytsqkqsm,fieldJCDDs,fieldSTQKjtcyfs,fieldSTQKjtcyzljgmc,fieldSQSJ,fieldzgzjzdzs,fieldzgzjzdzq,fieldJBXXnj,fieldSTQKjtcyzdkssj,fieldSTQKfx,fieldSTQKfs,fieldYQJLjcdry,fieldCXXXjtfsdb,fieldCXXXcxzt,fieldYQJLjcddshi,fieldCXXXjtjtzz,fieldCXXXsftjhbs,fieldHQRQ,fieldSTQKjtcyqtms,fieldCXXXksjcsj,fieldSTQKzdkssj,fieldSTQKjtcyzysj,fieldjgshi,fieldSTQKjtcyxm,fieldJBXXsheng,fieldJBXXdrsfwc,fieldqjymsjtqk,fieldJBXXdw,fieldCXXXjcdr,fieldCXXXsftjhbjtdz,fieldJCDDq,fieldSTQKjtcyclfs,fieldSTQKxm,fieldCXXXjtgjbc,fieldSTQKjtcygldd,fieldzgzjzdzshi,fieldSTQKjtcyzdjgmcc,fieldSTQKzd,fieldSTQKqt,fieldCXXXlksj,fieldSTQKjtcyfrsj,fieldCXXXjtfsqtms,fieldSTQKjtcyzdmc,fieldCXXXjtfsfj,fieldJBXXfdy,fieldJBXXxm,fieldSTQKzljgmc,fieldCXXXzhycjcsj,fieldCXXXsftjhbq,fieldSTQKqtms,fieldYCFDY,fieldJBXXxb,fieldSTQKglkssj,fieldCXXXjtfspc,fieldSTQKbrstzk1,fieldYCBJ,fieldCXXXssh,fieldSTQKzysj,fieldJBXXgh,fieldCNS,fieldCXXXfxxq,fieldSTQKclfs,fieldSTQKqtqksm,fieldCXXXqjymsxgqk,fieldYCBZ,fieldJBXXxnjzbgdz,fieldSTQKjtcyfl,fieldSTQKjtcyzdjgmc,fieldCXXXddsj,fieldSTQKfrsj,fieldSTQKgldd,fieldCXXXfxcfsj,fieldJBXXbj,fieldSTQKks,fieldJBXXcsny,fieldCXXXjtzzq,fieldJBXXJG,fieldCXXXdqszd,fieldCXXXjtzzs,fieldJBXXshi,fieldSTQKjtcyfrtw,fieldSTQKjtcystzk1,fieldCXXXjcdqk,fieldSTQKzdmc,fieldSTQKjtcyks,fieldSTQKjtcystzk,fieldCXXXjtfshc,fieldCXXXcqwdq,fieldSTQKjtcypcsj,fieldJBXXqu,fieldJBXXjgshi,fieldYQJLjcddq,fieldYQJLjcdryjkqk,fieldYQJLjcdds,fieldSTQKjtcyhxkn,fieldCXXXjtzz,fieldJBXXjgq,fieldCXXXjtfsqt,fieldJBXXjgs,fieldSTQKzdjgmcc,fieldJBXXqjtxxqk,fieldDQSJ,fieldSTQKjtcyglfs,fieldJKMsfwlm,fieldJKMjt'
+    formdata_init_data = formdata_init(
+        data, clock_form_url, tags, instanceName, ymtime)
+    formdata = str(formdata_init_data)\
+        .replace('"', '\\\"').replace("'", '"').replace(' ', '').replace('False', 'false').replace('True', 'true')
+    boundFields = ','.join(formdata_init_data.keys())
     postdata = {'stepId': stepId, 'actionId': 1, 'formData': formdata, 'timestamp': str(int(time.time())), 'rand': str(
         random.random()*999), 'csrfToken': csrfToken, 'lang': 'zh', 'boundFields': boundFields, 'nextUsers': '{}'}
 
@@ -126,16 +128,18 @@ def sleeptime() -> float:
     # return 0
 
 
-def runclock(username: str, password: str):
+def runclock(username: str, password: str, ymtime: str):
     session = requests.Session()
     session.headers = requestheaders
+    ymtime = int(time.mktime(time.strptime(ymtime, '%Y-%m-%d')))
+    
     print('================================')
     print(f'{time.asctime(time.localtime())}启动打卡')
 
     time.sleep(sleeptime())
 
     print(f'{time.asctime(time.localtime())}准备打卡')
-    if login(session, username, password) and clock(session):
+    if login(session, username, password) and clock(session, ymtime):
         print(f'{time.asctime(time.localtime())}完成打卡')
     else:
         print_err(f'{time.asctime(time.localtime())}打卡失败')
@@ -151,6 +155,7 @@ def postmarkdown2dingbot(title:str, text:str):
 
 defusername = ""
 defpassword = ""
+defymtime = ""
 err_buff:list = []
 post2dingbot = False
 
@@ -166,7 +171,7 @@ def main():
         isreaddef = True
 
     if (isreaddef):
-        runclock(defusername, defpassword)
+        runclock(defusername, defpassword, defymtime)
         postmarkdown2dingbot("【自动打卡】错误", f"""<font color=red>{time.strftime("%Y年%m月%d日 %H:%M", time.localtime())}<br>{'<br>'.join(err_buff)}</font>""")
         err_buff.clear()
     else:
@@ -174,12 +179,13 @@ def main():
             try:
                 username = user['username']
                 password = user['password']
+                ymtime = user['ymtime']
             except:
                 print("读取某个登录用户失败")
                 postmarkdown2dingbot("【自动打卡】错误", f"""<font color=red>读取某个登录用户失败，配置为：<br>{user}</font>""")
                 continue
             try:
-                runclock(username, password)
+                runclock(username, password, ymtime)
             except Exception as e:
                 traceback.print_exc()
                 print_err(e.args)

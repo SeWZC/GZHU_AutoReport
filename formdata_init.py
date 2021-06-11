@@ -1,10 +1,20 @@
 # a = {'班长':'fieldJBXXbz_Name', '辅导员':'fieldJBXXfdy_Name', '校内地址':'fieldJBXXxnjzbgdz'}
 
-def formdata_init(data:dict, clock_form_url, tags, instanceName, clock_info: dict = None):
+import time
+
+def formdata_init(data:dict, clock_form_url, tags, instanceName, clock_info: dict = None, ymtime: int = 0):
     formdata = {}
 
     formdata['fieldJKMsfwlm'] = '1'
     formdata['fieldJKMjt'] = ''
+    now = int(time.time())
+    if (691200 > now-ymtime > 0):
+        formdata['fieldYZNSFJCHS'] = "1"
+        formdata['fieldJCSJ'] = str(ymtime)
+    else:
+        formdata['fieldYZNSFJCHS'] = "2"
+        formdata['fieldJCSJ'] = ""
+
 
     formdata['_VAR_EXECUTE_INDEP_ORGANIZE_Name'] = data.get('_VAR_EXECUTE_INDEP_ORGANIZE_Name', '')
     formdata['_VAR_ACTION_INDEP_ORGANIZES_Codes'] = data.get('_VAR_ACTION_INDEP_ORGANIZES_Codes', '')
@@ -230,4 +240,7 @@ def formdata_init(data:dict, clock_form_url, tags, instanceName, clock_info: dic
     formdata['fieldYCFDY'] = data.get('fieldYCFDY', '')
     formdata['fieldYCBZ'] = data.get('fieldYCBZ', '')
     formdata['fieldYCBJ'] = data.get('fieldYCBJ', '')
+
+    formdata['fieldLYYZM'] = data.get('fieldLYYZM', '')
+    
     return formdata
