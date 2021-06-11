@@ -132,7 +132,7 @@ def runclock(username: str, password: str, ymtime: str):
     session = requests.Session()
     session.headers = requestheaders
     ymtime = int(time.mktime(time.strptime(ymtime, '%Y-%m-%d')))
-    
+
     print('================================')
     print(f'{time.asctime(time.localtime())}启动打卡')
 
@@ -155,7 +155,7 @@ def postmarkdown2dingbot(title:str, text:str):
 
 defusername = ""
 defpassword = ""
-defymtime = ""
+defymtime = "2021-6-4"
 err_buff:list = []
 post2dingbot = False
 
@@ -179,7 +179,7 @@ def main():
             try:
                 username = user['username']
                 password = user['password']
-                ymtime = user['ymtime']
+                ymtime = user.get('ymtime', defymtime)
             except:
                 print("读取某个登录用户失败")
                 postmarkdown2dingbot("【自动打卡】错误", f"""<font color=red>读取某个登录用户失败，配置为：<br>{user}</font>""")

@@ -2,15 +2,15 @@
 
 import time
 
-def formdata_init(data:dict, clock_form_url, tags, instanceName, clock_info: dict = None, ymtime: int = 0):
+def formdata_init(data:dict, clock_form_url, tags, instanceName, ymtime: int):
     formdata = {}
 
     formdata['fieldJKMsfwlm'] = '1'
     formdata['fieldJKMjt'] = ''
     now = int(time.time())
-    if (691200 > now-ymtime > 0):
+    if 691200 > now-ymtime > 0:
         formdata['fieldYZNSFJCHS'] = "1"
-        formdata['fieldJCSJ'] = str(ymtime)
+        formdata['fieldJCSJ'] = ymtime
     else:
         formdata['fieldYZNSFJCHS'] = "2"
         formdata['fieldJCSJ'] = ""
