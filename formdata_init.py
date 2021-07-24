@@ -15,6 +15,9 @@ def formdata_init(data:dict, clock_form_url, tags, instanceName, ymtime: int):
         formdata['fieldYZNSFJCHS'] = "2"
         formdata['fieldJCSJ'] = ""
 
+    formdata['fieldSFJZYM'] = data.get('fieldSFJZYM')
+    if formdata['fieldSFJZYM'] == "1":
+        formdata['fieldJZDZC'] = data.get('fieldJZDZC')
 
     formdata['_VAR_EXECUTE_INDEP_ORGANIZE_Name'] = data.get('_VAR_EXECUTE_INDEP_ORGANIZE_Name', '')
     formdata['_VAR_ACTION_INDEP_ORGANIZES_Codes'] = data.get('_VAR_ACTION_INDEP_ORGANIZES_Codes', '')

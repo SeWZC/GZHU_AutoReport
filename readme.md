@@ -13,6 +13,7 @@ git clone https://github.com/SeWZC/GZHU_AutoReport.git
 ```sh
 python3 -m pip install -r requirements.txt
 ```
+同时还需要安装nodejs
 
 ### 配置文件 `config.json`：
 ```json
@@ -26,11 +27,6 @@ python3 -m pip install -r requirements.txt
   ]
 }
 ```
-
-### 验证码识别：
-在文件`auto_report.py`中有一个`get_captcha_code`，将其实现完成即可<br>
-可以在[百度云](https://console.bce.baidu.com/ai/#/ai/ocr/app/list)申请，具体如何使用请查看对应接口的说明<br>
-如果仅需要测试可以使用`captcha.py`中的代码，请勿用于正式打卡
 
 ### 测试
 ```sh
