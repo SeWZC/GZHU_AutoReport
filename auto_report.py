@@ -22,7 +22,7 @@ capurl = "https://cas.gzhu.edu.cn/cas_server/captcha.jsp"
 requestheaders = {
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36"
 }
-
+ctx = execjs.compile(requests.get("https://newcas.gzhu.edu.cn/cas/comm/js/des.js").text)
 
 def print_err(err: str) -> None:
     print(f"\033[1;31;40m{err}\033[0m")
@@ -45,8 +45,6 @@ def login(session: requests.Session, username: str, password: str) -> bool:
     login_data["ul"] = len(username)
     login_data["pl"] = len(password)
 
-    with open('des.js')as f:
-        ctx = execjs.compile(f.read())
     s = username+password+login_data['lt']
     rsa = ctx.call('strEnc',s,'1','2','3')
     login_data['rsa'] = rsa

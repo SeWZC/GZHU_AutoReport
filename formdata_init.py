@@ -5,19 +5,19 @@ import time
 def formdata_init(data:dict, clock_form_url, tags, instanceName, ymtime: int):
     formdata = {}
 
-    formdata['fieldJKMsfwlm'] = '1'
-    formdata['fieldJKMjt'] = ''
-    now = int(time.time())
-    if 691200 > now-ymtime > 0:
-        formdata['fieldYZNSFJCHS'] = "1"
-        formdata['fieldJCSJ'] = ymtime
-    else:
-        formdata['fieldYZNSFJCHS'] = "2"
-        formdata['fieldJCSJ'] = ""
+    formdata['fieldJKMsfwlm'] = '1' # 绿码
+    formdata['fieldJKMjt'] = '' # 非绿码截图
+    # now = int(time.time())
+    # if 691200 > now-ymtime > 0:
+    #     formdata['fieldYZNSFJCHS'] = "1" # 一周内是否进行了核酸检测
+    #     formdata['fieldJCSJ'] = ymtime # 核酸检测时间
+    # else:
+    #     formdata['fieldYZNSFJCHS'] = "2"
+    #     formdata['fieldJCSJ'] = ""
 
-    formdata['fieldSFJZYM'] = data.get('fieldSFJZYM')
+    formdata['fieldSFJZYM'] = data.get('fieldSFJZYM') # 是否接种疫苗
     if formdata['fieldSFJZYM'] == "1":
-        formdata['fieldJZDZC'] = data.get('fieldJZDZC')
+        formdata['fieldJZDZC'] = data.get('fieldJZDZC') # 接种针数
 
     formdata['_VAR_EXECUTE_INDEP_ORGANIZE_Name'] = data.get('_VAR_EXECUTE_INDEP_ORGANIZE_Name', '')
     formdata['_VAR_ACTION_INDEP_ORGANIZES_Codes'] = data.get('_VAR_ACTION_INDEP_ORGANIZES_Codes', '')
